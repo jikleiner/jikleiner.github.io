@@ -1,0 +1,97 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <link rel="stylesheet" href="index.css">
+    </head>
+    <title>Practica profesional - Kleiner Jose</title>
+    <body>
+        <h1>Introduccion de la empresa</h1>
+        <h2>Globant</h2>
+        <h3>Historia</h3>
+        <p>
+            Globant es una empresa de ingeniería de software y tecnología de la información originaria de Argentina.
+            Fundada en el año 2003 por Martín Migoya, Guibert Englebienne, Martín Umarán y 
+            Néstor Nocetti, todos ex empleados en la misma compañía, la consultora Tallion.<br>
+            En medio de un contexto economico complicado por la megadevaluación de 2002, ellos compartian una visión 
+            a largo plazo: crear una gran multinacional. Como uno de sus fundadores menciona en entrevista brindada al 
+            diario Clarin, <q>Veíamos que en el mundo había compañías que desarrollaban tecnología para los países 
+            desarrollados que la consumían, pero que esas compañías estaban en otros lugares, no pertenecían al Primer 
+            Mundo. Dijimos: en toda América latina no existe una firma que esté mirando a los mercados globales, nosotros 
+            podríamos ocupar ese lugar</q> (diario Clarin, 2019). Así nació Globant.<br> 
+            <br>
+            <a href="https://www.clarin.com/politica/historia-fundadores-globant-unicornio-argentino-visito-alberto-fernandez_0_iu1n00c1.html">
+                Fuente: Diario clarin - Historia de los fundadores de Globant. Silvia Naishtat, 2019.
+            </a>
+        </p>
+        <p>
+            Hoy la empresa es líder mundial en transformación digital y cognitiva, con su 'AI Mindset Services' en el 
+            centro de la propuesta de valor, está presente en 25 países y cuenta con más de 27.000 profesionales.<br>
+            Globant trabaja para clientes de clase mundial como Google, Electronic Arts, NatGeo, Southwest Airlines y 
+            Coca Cola, entre otros. (pagina oficial de globant, 2023).<br>
+            <br>
+            <a href="https://www.globant.com/es/about">
+                Fuente: Sitio institucional de Globant.
+            </a>
+        </p>
+        <h2>Descripcion de la intervencion profesional</h2>
+        <h3>Marco Referencial</h3>
+        <p>
+            En el contexto de Globant, empresa cuyo nivel de madurez es elevado tanto a nivel tecnico como en procesos, 
+            el esquema de trabajo pone sus profesionales al servicio de terceros, como es mi caso de estudio con el cliente 
+            Western Union, en el cual me encontrare formando parte de un equipo profesional a cargo de el diseño de la 
+            arquitectura para la modernizacion de uno de sus modulos de centralizacion de deudas, las cuales son recolectadas 
+            de las entidades emisoras (prestadoras de servicios) y consumidas a su vez por agentes de pago electronico como 
+            MercadoPago, por nombrar uno. En este contexto, mis tareas estaran avocadas al diseño de implementaciones que 
+            provean mejoras a nivel de performance y escalabilidad.
+        </p>
+        <h3>Tema 6: Análisis y diseño de software</h2>
+        <p>
+            Cliente: Western Union<br>
+            Proyecto: Migración de procesamiento de deuda por lote<br>
+            Descripción:<br>
+            <br>
+            El cliente solicita la reestructuración de su sistema de procesamiento de lotes de pagos. Por un pago entendemos 
+            a un registro perteneciente a alguna entidad, por lo general prestadores de servicios, el cual es previamente 
+            ingresado al sistema de forma masiva, y debe ser sometido a un proceso ETL (extract, transform and load) para poder 
+            ser distribuido a distintos esquemas en bases de datos, los cuales son luego consumidos por las entidades que 
+            realizan el cobro a través de medios electrónicos.<br>
+            Requerimiento:<br>
+            Mejorar la infraestructura de sistemas que forman parte del proceso ETL antes mencionado mediante la implementación 
+            de tecnologías actuales y la reestructuración del procesamiento, realizando la migración de los procesos de 
+            transformación de datos.<br>
+            Situación actual:
+            <br>
+            El procesamiento de lotes de pagos se realiza en dos fases:<br>
+            1) ETL: El proceso de extracción y transformación se realiza en la capa de persistencia. La misma corre sobre una base 
+            de datos relacional Oracle en donde se encuentran alojados los procedimientos almacenados PL/SQL que realizan tareas 
+            de preproceso, proceso y postproceso.<br>
+            2) Disparador: el disparador se ejecuta de manera síncrona todos los días a las 3 am. El software a cargo de la tarea 
+            está implementado en el lenguaje Java con arquitectura REST mediante implementación del framework Quartz para el 
+            proceso cronometrado.<br>
+            3) Integración: La integración entre los procesos antes expuestos se realiza con el soporte de la herramienta Apache Camel.<br>
+            <br>
+            Sumario - Tech stack:<br>
+            Oracle12<br>
+            Java1.8<br>
+            Apache Camel<br>
+            RestLet<br>
+            Quartz<br>
+            <br>
+            Sumario requerimientos:<br>
+            Migración del proceso ETL.<br>
+            Migración del proceso cronometrado.<br>
+            Actualización del motor de base de datos.<br>
+            Actualización de tecnologías Java.<br>
+            Migración de cronometración cada 24 hs a near-real time<br>
+            <br>
+            Propuesta:<br>
+            Proceso ETL: Implementación en framework Spring Batch, Paralelización del procesamiento de lotes mediante paginado.<br>
+            Disparador: Creación de endpoint en Spring Boot que reciba la información de un lote apto para proceso.<br>
+            Integración: Migración a Apache Kafka, implementación de API Kafka Consumers para la paralelización de la cola de mensajería.<br>
+            Migración de Oracle11 a Oracle19, Implementación de instancia réplica y separación de procesos de lectura / escritura en distintas instancias.<br>
+        </p>
+    </body>
+    <footer>
+        Autor: Kleiner Jose. Universidad siglo 21, 2023.
+    </footer>
+</html>
