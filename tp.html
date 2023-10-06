@@ -153,6 +153,7 @@
 					<li>Integración: La integración entre los procesos antes expuestos se realiza con el soporte
 						de la herramienta Apache Camel.</li>
 					<br>
+				</p>
 				<div class="row">
 					<div class="col-6 col-12-small">
 						<h3>Sumario - Tech stack</h3>
@@ -194,10 +195,346 @@
 					Migración de Oracle11 a Oracle19, Implementación de instancia réplica y separación de
 					procesos de lectura / escritura en distintas instancias.<br>
 				</p>
+				<h3>Metodología aplicada</h3>
+				<p>
+					Con el contexto dado, se pretende realizar una primera propuesta de arquitectura de alto nivel
+					usando una metodología
+					de documentación que integra partes del enfoque 𝗔𝗿𝗰𝗵𝗶𝘁𝗲𝗰𝘁𝘂𝗿𝗲 𝗗𝗲𝗰𝗶𝘀𝗶𝗼𝗻
+					𝗥𝗲𝗰𝗼𝗿𝗱𝘀 (𝗔𝗗𝗥𝘀).<br>
+					Con ADR se documentan las decisiones tomadas durante el diseño y la implementación de un sistema o
+					aplicación de software.
+					Un ADR es un documento breve que captura la justificación detrás de una decisión arquitectónica
+					particular, las
+					alternativas que se consideraron y las compensaciones involucradas.<br>
+					<a href="https://adr.github.io/">
+						Fuente: ADR GitHub organization.
+					</a>
+					<br>
+					En cuanto a la metodología de trabajo y gestión del proyecto, se opta por utilizar Agile con soporte
+					de procesos provistos
+					por el cliente en la herramienta Azure DevOps.<br>
+					La elección de Agile está ligada a la necesidad de realizar entregas parciales incrementales de los
+					componentes.
+				</p>
+				<h3>Propuesta de implementación</h3>
+				<p>
+					Se describen a continuación los componentes que se plantean implementar para la modernización del
+					servicio. La propuesta
+					incluye tanto aspectos técnicos específicos como también el análisis correspondiente de la
+					funcionalidad de los componentes
+					correspondientes.
+				</p>
+				<h4>Bills Data Loader</h4>
+				<p>
+					Microservicio que obtiene las facturas de los usuarios inscritos a WU e invoca al Job Processor de
+					forma asincrónica con la
+					factura que debe procesarse en el sistema. Aplica reglas de negocio antes de acudir al servicio de
+					pago.<br>
+					No se obtendrán las facturas correspondientes a usuarios no inscritos y por lo tanto estas no serán
+					procesadas posteriormente
+					por el Job Processor.<br>
+					<i>Funcionalidades que se implementarán:</i> Obtener Facturas de Entidades 100% en línea y Obtener
+					Facturas de Entidades por
+					Lote dentro del esquema de WU.
+				</p>
+				<h4>Job Processor</h4>
+				<p>
+					Responsable de procesar las facturas de los usuarios inscritos que provienen de la comunicación con
+					el componente BIlls Data
+					Loader. Aplica reglas antes de persistir las facturas.<br>
+					<i>Funcionalidades que se implementarán:</i> cargado de facturas al esquema de procesamiento.
+				</p>
+				<h4>Flujo de Componentes</h4>
+				<p>
+					A continuación se detallan los procesos con los flujos más importantes.
+				</p>
+				<h5>Procesamiento por lotes</h5>
+				<p>
+					El componente Bills Data Loader solicitará datos de lotes a procesar al esquema de WU. Antes de
+					transmitir los mismos, el
+					componente Bills Data Loader utilizará un módulo de reglas (biblioteca interna) para obtener las
+					reglas para procesar las
+					facturas.
+				</p>
+				<br>
+				<h3>Principales beneficios de la arquitectura</h3>
+				<p>
+					Utilizando esta arquitectura basada en microservicios reactivos podemos obtener importantes
+					beneficios como:
+				</p>
+				<ul>
+					<li><b>Gobernanza descentralizada</b>: cada microservicio opera de forma independiente, con su
+						propio ciclo
+						de vida, equipo de desarrollo y canal de implementación.</li>
+					<li><b>Implementación independiente</b>: los microservicios se pueden implementar de forma
+						independiente
+						entre sí, lo que permite una entrega más rápida de nuevas funciones y correcciones de errores.
+					</li>
+					<li>La <b>arquitectura de microservicios</b> implica dividir una aplicación monolítica en funciones
+						o
+						servicios componentes, que luego se conectan libremente a través de API. Esto permite una
+						escalabilidad mejorada, un mejor aislamiento de fallas y un tiempo de disponibilización más
+						rápido.</li>
+					<li>Cada microservicio en esta arquitectura puede implementarse en cualquier idioma y ejecutarse en
+						cualquier plataforma, ofreciendo <b>flexibilidad</b> en el uso de las mejores herramientas para
+						las
+						necesidades de cada proyecto.</li>
+					<li><b>Aspectos de seguridad</b>: los microservicios permiten una mejor seguridad, ya que cada
+						servicio es
+						responsable de una tarea específica, lo que facilita la implementación de medidas de seguridad a
+						nivel de servicio. Las políticas de autenticación y autorización, la estrategia de tokenización,
+						los certificados y las definiciones de cifrado se definirán, documentarán e implementarán en la
+						fase de construcción, si es necesario.</li>
+					<li>Al <b>desacoplar el consumo de datos</b> por parte de otras API’s de los procesos de escritura
+						(Job
+						Processor que usa una instancia de base de datos de escritura) se brinda más flexibilidad y
+						aumenta el consumo de carga de trabajo sin afectar las operaciones de escritura de la base de
+						datos (operaciones bloqueantes).</li>
+					<li>La <b>escalabilidad</b> viene con la plataforma Kubernetes y se puede realizar de forma
+						horizontal o
+						vertical.</li>
+				</ul>
+				<br>
+				<h3>Propuesta de mejora del procesamiento por lotes</h3>
+				<p>
+					Proponemos la migración de la lógica de procesamiento que actualmente se realiza en PL/SQL a Spring
+					Batch. Esta herramienta, que está diseñada implementando patrones de diseño como Builders, Factorys,
+					Chain of responsability y Adapters, entre otros, mejorará enormemente el rendimiento del proceso ETL
+					(Extracción, Transformación y Carga) al procesar entidades en fragmentos de datos de tamaño
+					definido.
+					permitiendo que las operaciones de lectura y escritura se realicen de forma menos recurrente.<br>
+					El procesador de datos se activará al consumir eventos de un mensaje del Bills Data Loader. Al
+					recibir
+					eventos de esta fuente, puede aprovechar los beneficios de las colas de mensajería, como la alta
+					escalabilidad, la tolerancia a fallas y la velocidad.<br>
+					<br>
+					<b>Diagrama de arquitectura de JobProcessor</b>
+					<br>
+				</p>
+				<div class="image main"><img src="images/diagrama1.jpg" alt="" /></div>
+				<p>
+					<b>Detalles de los componentes:</b><br>
+				<ul>
+					<li><u>JobLauncher</u>: Ejecuta objetos de trabajo por lotes.</u></li>
+					<li><u>Job</u>: Objeto de dominio por lotes. Job es una abstracción explícita que representa la
+						configuración de un
+						trabajo.</li>
+					<li><u>Step</u>: Representa la configuración de un paso pero también la capacidad de ejecutar el
+						paso.</li>
+					<li><u>ItemReader</u>: Objeto con varias estrategias para extraer datos como elementos de entrada
+						por lotes.</li>
+					<li><u>ItemWriter</u>: Objeto con lógica para conservar los datos de los elementos de salida.</li>
+					<li><u>ItemProcessor</u>: Realiza la transformación del elemento cargado proporcionado y devuelve el
+						elemento que
+						se va a escribir.</li>
+					<li><u>JobRepository</u>: Proporciona persistencia de los metadatos de los trabajos (parámetros).
+					</li>
+				</ul>
+				<b>Ventajas:</b><br>
+				<ul>
+					<li>Más escalabilidad, tolerancia a fallos y mantenibilidad.</li>
+					<li>Menos operaciones de lectura/escritura debido al uso de fragmentos de datos en operaciones de
+						extracción
+						(lectura) y carga (escritura).</li>
+					<li>Altamente configurable/parametrizable.</li>
+					<li>Mejor rendimiento en el proceso de transformación debido a la paralelización.</li>
+					<li>Más legibilidad y flexibilidad para futuras mejoras.</li>
+				</ul>
+				<b>Performance:</b><br>
+				Para tener mayor claridad sobre el desempeño general de este componente, realizamos una prueba de
+				concepto, en la que se utilizaron dos bases de datos, una para leer registros y otra para insertarlos en
+				dos tablas separadas. La idea con este ejercicio es tener referencias de los recursos que consume y el
+				tiempo que lleva realizar el proceso ETL y las operaciones pre y post base de datos.
+				Los siguientes valores se obtuvieron de una tabla de muestra de 199918 filas y cada columna indica el
+				tamaño del fragmento de datos.<br>
+				<br>
+				<div class="table-wrapper">
+					<table>
+						<thead>
+							<tr>
+								<th>Cant. Registros</th>
+								<th>Memoria</th>
+								<th>Duración</th>
+							</tr>
+						</thead>
+						<tbody>
+							<tr>
+								<td>100</td>
+								<td>60 megas</td>
+								<td>15s623ms</td>
+							</tr>
+							<tr>
+								<td>1000</td>
+								<td>90 megas</td>
+								<td>9s646ms</td>
+							</tr>
+							<tr>
+								<td>5000</td>
+								<td>100 megas</td>
+								<td>9s169ms</td>
+							</tr>
+							<tr>
+								<td>10000</td>
+								<td>110 megas</td>
+								<td>9s678ms</td>
+							</tr>
+							<tr>
+								<td>20000</td>
+								<td>110 megas</td>
+								<td>9s511ms</td>
+							</tr>
+						</tbody>
+					</table>
+				</div>
+				<i>Arquitectura del sistema:</i> aarch64<br>
+				<i>CPU:</i> Apple M2<br>
+				<i>Memoria:</i> 16Gb<br>
+				<i>Memoria base utilizada por la aplicación:</i> 50 MB<br>
+				</p>
+				<h4>Herramienta y detalles del proceso cronometrado</h4>
+				<p>
+					Dado que toda la nueva arquitectura se orquestará en Kubernetes, recomendamos reemplazar la
+					herramienta
+					cron existente que lee las bases de datos de WU por una de las siguientes opciones:<br>
+				<h5>CronJob</h5>
+				CronJob es muy útil en nuestro contexto ya que los trabajos se ejecutan en sus propios contenedores
+				separados. Esto nos permite asociar CronJob a una versión específica de un contenedor, actualizar cada
+				cron individualmente y personalizarlo con las dependencias específicas que necesite.<br>
+				Con la opción CronJob, podemos configurar los recursos que utilizará su contenedor. Además esta
+				herramienta tiene una política de reintento incorporada. Si un CronJob falla, podemos definir si debe
+				ejecutarse nuevamente y cuántas veces debe reintentar.<br>
+				<br>
+				La implementación se realiza en un archivo YAML simple.<br>
+				<br>
+				<h5>WebHook</h5>
+				En pocas palabras, un WebHook es un retorno de llamada HTTP POST que podría ocurrir de forma
+				cronometrada; una simple notificación de evento. Una aplicación web que implemente WebHooks publicara un
+				mensaje en una URL cuando suceda cierto evento, como que un nuevo lote esté listo para ser procesado.
+				Esta herramienta enviaría un mensaje al propio Job Processor.<br>
+				<br>
+				La implementación es muy sencilla y casi no necesita mantenimiento.<br>
+				<br>
+				</p>
+				<h4>Comunicación entre Microservicios</h4>
+				<p>
+					Para la orquestación de la comunicación entre los microservicios Bills Data Loader y Job Processor,
+					proponemos el uso de llamadas de solicitud HTTP no bloqueantes, con WebFlux como herramienta
+					sugerida.
+					Nos permite configurar no sólo el envío de mensajes HTTP entre servicios, sino que también permite
+					la
+					implementación de paralelización en el componente Job Processor. Con esto podremos lograr una
+					implementación efectiva y eficiente en cuanto al procesamiento paralelo de facturas,
+					independientemente
+					del origen.<br>
+					<br>
+					<b>Diagrama de implementación de WebFlux</b><br>
+				<div class="image main"><img src="images/diagrama2.jpg" alt="" /></div>
+				</p>
+				<h4>Gestión de datos</h4>
+				<p>
+					De acuerdo con nuestra propuesta, toda la lógica relacionada con los procedimientos almacenados se
+					migrará a una versión programática en Spring Batch (Ver <a>apartado Propuesta de mejora del
+						procesamiento por lotes</a> para más detalles).<br>
+					<br>
+					En cuanto a la persistencia de datos, proponemos migrar a una base de datos Oracle 19 y agregar una
+					réplica de sólo lectura usando Oracle DataGuard para la sincronización de las instancias.<br>
+					<br>
+					Al realizar esta separación por tipo de operación aseguramos una mayor velocidad de respuesta tanto
+					para la carga como para el consumo.
+				</p>
+				<h5>Volumetría estimada</h5>
+				<p>
+					Las siguientes tablas muestran valores mensuales tomados del último trimestre que abarca de junio a
+					agosto del presente año. Los tomaremos como valor estimado del posible incremento de la concurrencia
+					de
+					servicios y tratamientos de datos.<br>
+
+				<div class="table-wrapper">
+					<b>Facturas creadas por mes</b><br>
+					<br>
+					<table>
+						<thead>
+							<tr>
+								<th>Mes</th>
+								<th>Cantidad</th>
+							</tr>
+						</thead>
+						<tbody>
+							<tr>
+								<td>2023-06</td>
+								<td>8.798.726</td>
+							</tr>
+							<tr>
+								<td>2023-07</td>
+								<td>9.747.634</td>
+							</tr>
+							<tr>
+								<td>2023-08</td>
+								<td>5.401.234</td>
+							</tr>
+						</tbody>
+					</table>
+				</div>
+				<br>
+				<div class="table-wrapper">
+					<b>Concurrencia de Facturas consumidas por Minuto</b><br>
+					<br>
+					<table>
+						<thead>
+							<tr>
+								<th>Minuto</th>
+								<th>Cantidad</th>
+								<th>Promedio estimado/hora</th>
+							</tr>
+						</thead>
+						<tbody>
+							<tr>
+								<td>2023-08-04 11:08:00</td>
+								<td>3.222</td>
+								<td>193.320</td>
+							</tr>
+							<tr>
+								<td>2023-08-04 11:08:46</td>
+								<td>3.205</td>
+								<td>192.300</td>
+							</tr>
+							<tr>
+								<td>2023-08-04 11:08:20</td>
+								<td>3.199</td>
+								<td>191.940</td>
+							</tr>
+						</tbody>
+					</table>
+				</div>
+				<br>
+				<div class="table-wrapper">
+					<b>Registros máximos creados por día</b><br>
+					<br>
+					<table>
+						<thead>
+							<tr>
+								<th>Día</th>
+								<th>Cantidad</th>
+							</tr>
+						</thead>
+						<tbody>
+							<tr>
+								<td>2023-09-04</td>
+								<td>35.201.759</td>
+							</tr>
+						</tbody>
+					</table>
+				</div>
+				<br>
+					En este punto, se propone la escalabilidad horizontal a través de la replicación de instancias de
+					procesamiento ante un aumento en estas cantidades, posibilidad que ofrecen los servicios stateless, como
+					es el caso de cada uno de los componentes que se construirán para este proyecto.<br>
+					<br>
 				</p>
 			</section>
 			<ul class="actions special">
-				<li><a class="button" href="assets/documents/Pract. Profesional Entrega 2 Kleiner Jose.pdf">descargar</a></li>
+				<li><a class="button"
+						href="assets/documents/Pract. Profesional Entrega 3 Kleiner Jose.pdf">descargar</a></li>
 			</ul>
 		</div>
 
