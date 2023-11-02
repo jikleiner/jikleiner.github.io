@@ -48,17 +48,35 @@
 
 		<!-- Main -->
 		<div id="main">
-
-			<!-- Post -->
-			<section class="post">
+			<section class="post" id="indice">
 				<header class="major">
-					<h1>Practica profesional
-					</h1>
+					<h1>Practica profesional</h1>
 				</header>
+				<ul class="actions special"></ul>
+				<h2><a>Indice de entregas</a></h2>
+				</ul>
+				<hr>
 
+				<ul class="actions special">
+					<h3><a href="#primera-entrega">Introduccion a la empresa</a></h3>
+				</ul>
+				<ul class="actions special">
+					<h3><a href="#segunda-entrega">Descripcion de la intervencion profesional (Entrega 1)</a></h3>
+				</ul>
+				<ul class="actions special">
+					<h3><a href="#tercera-entrega">Metodología aplicada y propuesta de implementación (Entrega 2)</a>
+					</h3>
+				</ul>
+				<ul class="actions special">
+					<h3><a href="#cuarta-entrega">Conclusión sobre la práctica realizada (Entrega 3)</a></h3>
+				</ul>
+
+
+			</section>
+			<!-- Post -->
+			<section class="post" id="primera-entrega">
 				<h2>Introduccion de la empresa</h2>
 				<h2>Globant</h2>
-				<hr>
 				<h3>Historia</h3>
 				<p>
 					Globant es una empresa de ingeniería de software y tecnología de la información originaria de
@@ -94,7 +112,11 @@
 					<a href="https://www.globant.com/es/about">
 						Fuente: Sitio institucional de Globant.
 					</a>
+					<hr>
+				<h4><a href="#indice">Volver al indice</a></h4>
 				</p>
+			</section>
+			<section class="post" id="segunda-entrega">
 				<h3>Descripcion de la intervencion profesional</h3>
 				<h4>Marco Referencial</h4>
 				<p>
@@ -195,6 +217,10 @@
 					Migración de Oracle11 a Oracle19, Implementación de instancia réplica y separación de
 					procesos de lectura / escritura en distintas instancias.<br>
 				</p>
+				<hr>
+				<h4><a href="#indice">Volver al indice</a></h4>
+			</section>
+			<section class="post" id="tercera-entrega">
 				<h3>Metodología aplicada</h3>
 				<p>
 					Con el contexto dado, se pretende realizar una primera propuesta de arquitectura de alto nivel
@@ -526,15 +552,87 @@
 					</table>
 				</div>
 				<br>
-					En este punto, se propone la escalabilidad horizontal a través de la replicación de instancias de
-					procesamiento ante un aumento en estas cantidades, posibilidad que ofrecen los servicios stateless, como
-					es el caso de cada uno de los componentes que se construirán para este proyecto.<br>
-					<br>
+				En este punto, se propone la escalabilidad horizontal a través de la replicación de instancias de
+				procesamiento ante un aumento en estas cantidades, posibilidad que ofrecen los servicios stateless, como
+				es el caso de cada uno de los componentes que se construirán para este proyecto.<br>
+				<br>
 				</p>
+				<hr>
+				<h4><a href="#indice">Volver al indice</a></h4>
+			</section>
+			<section class="post" id="cuarta-entrega">
+				<h2>Conclusión sobre la práctica realizada</h2>
+				<p>
+					Una de las primeras conclusiones a las que arribé durante el diseño de la solución propuesta para
+					Western Union fue sobre la problemática asociada a los cambios de tecnología que enfrentan los
+					sistemas.
+					El creciente avance en el desarrollo de librerías, componentes built-in altamente configurables y
+					arquitecturas holgadamente escalables y de alta disponibilidad ponen en clara evidencia cómo los
+					sistemas se deterioran a un ritmo cada vez más veloz. La problemática de WU es un claro ejemplo de
+					cómo
+					las empresas muchas veces deben invertir recursos en la modernización mediante desarrollo evolutivo
+					en
+					términos de infraestructura y arquitectura en vez de implementar nuevas funcionalidades en sus
+					sistemas
+					para continuar siendo competitivos.
+				</p>
+				<p>
+					En cuanto a lo técnico, la experiencia de diseñar una solución de estas características me llevó a
+					la
+					investigación exhaustiva de tecnologías, algunas de las cuales conocía únicamente por su nombre,
+					como es
+					el caso de Spring Batch, y otras que resultaron completamente nuevas para mi, como Redis Streams,
+					CronJob y WebHook.
+				</p>
+				<p>
+					Es en este punto en donde la reflexión me lleva a considerar donde reside la máxima fortaleza de
+					todo
+					buen profesional que se desempeña en el rubro tecnológico: la curiosidad.
+					Sin curiosidad, no hay límites que atravesar, ni nuevos desafíos que superar, y por consecuencia, no
+					tendríamos a las inteligencias artificiales generativas como Chat GPT con las que hoy conversamos,
+					ni
+					tendríamos vehículos espaciales reutilizables como el Falcon 9 de SpaceX e incluso no estaríamos en
+					las
+					puertas de automatizar la conducción de vehículos de calle mediante sistemas autónomos, como en los
+					vehículos Tesla y Mercedes Benz, entre otros.
+				</p>
+				<p>
+					Por otro lado, y volviendo sobre el objetivo de esta conclusión, esta práctica me llevó a poder
+					asumir
+					una mirada de alto nivel de los componentes que conforman un sistema de porte empresarial y de cómo
+					se
+					orquestan para realizar el procesamiento de datos. Esto lo encuentro de mucho interés y sumamente
+					enriquecedor, ya que en la labor de desarrollo, muchas veces esta mirada queda acotada solo para
+					arquitectos, y es justamente en ese rol en el cual me gustaría desempeñarme como futuro Ingeniero en
+					Software profesional.
+				</p>
+				<p>
+					No podría finalizar sin antes reconocer la importancia que tuvo en esta práctica el trabajo en
+					equipo
+					junto a gente muy talentosa que confío plenamente en mi criterio y para la cual tengo la dicha de
+					haberme convertido en un recurso clave a la hora no solo del diseño de la arquitectura y de los
+					componentes, sino también la co-redacción de documentación técnica, la invitación a la participación
+					activa en reuniones con el cliente y la posibilidad de realizar modelado de datos, componentes y
+					arquitectura.
+				</p>
+				<p>
+				<h5>Entregables realizados</h5>
+				<li>Modelo de dominio origen/destino LacaBillers.AV/BPS (Bill Payment Schedule)</li>
+				<li>Diagrama de componentes Spring Batch</li>
+				<li>Diagrama de integración Bills DataLoader - Job Processor</li>
+				<li>POC Spring Batch</li>
+				<li>POC Redis Stream</li>
+				</p>
+				<p>
+					<i><b>Nota:</i></b> No se adjuntan los archivos de los entregables antes mencionados por estar sujetos a acuerdos
+					de confidencialidad firmados entre Servicios Globales S.A. y Western Union Financial Services S.R.L.
+				</p>
+				<hr>
+				<h4><a href="#indice">Volver al indice</a></h4>
 			</section>
 			<ul class="actions special">
 				<li><a class="button"
-						href="assets/documents/Pract. Profesional Entrega 3 Kleiner Jose.pdf">descargar</a></li>
+						href="assets/documents/Pract. Profesional Entrega 4 Kleiner Jose.pdf">descargar</a></li>
 			</ul>
 		</div>
 
